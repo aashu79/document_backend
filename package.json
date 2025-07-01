@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/dotenv": "^8.2.3",
     "dotenv": "^17.0.0",
     "express": "^5.1.0",
     "multer": "^2.0.1"
