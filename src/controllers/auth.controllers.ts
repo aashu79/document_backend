@@ -49,9 +49,13 @@ export const registerUser = async (req: Request, res: Response) => {
       },
     });
 
-    res
-      .status(201)
-      .json({ success: true, message: "User registered successfully", user });
+    const { password: pass, ...userWithoutPassword } = user;
+
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      userWithoutPassword,
+    });
     return;
   } catch (error) {
     console.error("[REGISTER_USER_ERROR]", error);
