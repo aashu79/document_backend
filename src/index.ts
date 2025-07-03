@@ -1,7 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.route";
-import documentTypeRoutes from "./routes/document.route";
+import documentTypeRoutes from "./routes/document_type.route";
+import userDocumentRoutes from "./routes/user_document.route";
 import path from "path";
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/document-types", documentTypeRoutes);
+app.use("/api/user-documents", userDocumentRoutes);
 
 // Server start
 app.listen(PORT, () => {
