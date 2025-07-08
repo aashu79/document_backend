@@ -4,6 +4,7 @@ import {
   CreateUserDocumentSchema,
   UpdateUserDocumentSchema,
   UpdateDocumentStatusSchema,
+  CreateUserDocumentWithoutFieldDataSchema,
 } from "../schemas/userDocument.schema";
 import { AuthenticatedRequest } from "../types/auth.types";
 
@@ -451,6 +452,63 @@ export const getUserDocument = async (
     return;
   } catch (error) {
     console.error("[GET_USER_DOCUMENT_ERROR]", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+    return;
+  }
+};
+
+export const createUserDocumentWithoutFieldData = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    const result = CreateUserDocumentWithoutFieldDataSchema.safeParse(req.body);
+    if (!result.success) {
+      res.status(400).json({ error: result.error.flatten().fieldErrors });
+      return;
+    }
+
+    const { title, documentTypeId } = result.data;
+
+    // Extract userId from the AuthenticatedRequest
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ error: "Unauthorized: User ID not found" });
+      return;
+    }
+
+    const document = await prisma.userDocument.create({
+      data: {
+        userId,
+        title,
+        documentTypeId,
+        status: "Draft",
+      },
+      include: {
+        documentType: {
+          select: {
+            name: true,
+            description: true,
+            category: true,
+          },
+        },
+      },
+    });
+    res.status(201).json({
+      success: true,
+      message: "Document created successfully",
+      data: {
+        id: document.id,
+        title: document.title,
+        status: document.status,
+        documentType: document.documentType,
+        createdAt: document.createdAt,
+        updatedAt: document.updatedAt,
+      },
+    });
+    return;
+  } catch (error) {
+    console.error("[CREATE_USER_DOCUMENT_WITHOUT_FIELD_DATA_ERROR]", error);
     res.status(500).json({ success: false, error: "Internal server error" });
     return;
   }

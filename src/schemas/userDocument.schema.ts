@@ -19,6 +19,11 @@ export const CreateUserDocumentSchema = z.object({
   fieldData: z.array(DocumentFieldDataSchema).optional(),
 });
 
+export const CreateUserDocumentWithoutFieldDataSchema = z.object({
+  documentTypeId: z.string().uuid(),
+  title: z.string().min(1).max(255),
+});
+
 export const UpdateUserDocumentSchema = z.object({
   title: z.string().min(1).max(255).optional(),
   status: DocumentStatusSchema.optional(),
