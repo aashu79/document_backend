@@ -4,6 +4,7 @@ import authRoutes from "./routes/auth.route";
 import documentTypeRoutes from "./routes/documentTypes.route";
 import userDocumentRoutes from "./routes/userDocument.route";
 import templateRoutes from "./routes/documentTemplate.route";
+import generatePdf from "./routes/generatePdf.route";
 import path from "path";
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/document-types", documentTypeRoutes);
 app.use("/api/user-documents", userDocumentRoutes);
 app.use("/api/document-templates", templateRoutes);
+app.use("/api/generate-pdf", generatePdf);
 
 // Server start
 app.listen(PORT, () => {
