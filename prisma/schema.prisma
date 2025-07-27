@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -19,8 +13,8 @@ model User {
   lastName       String
   email          String         @unique
   phone          String?        @unique
-  password       String // Hashed password
-  profileImage   String? // Path or URL
+  password       String
+  profileImage   String?
   totalDocuments Int            @default(0)
   isVerified     Boolean        @default(false)
   isActive       Boolean        @default(true)
@@ -33,14 +27,74 @@ model DocumentType {
   id            String            @id @default(uuid())
   name          String            @unique
   description   String?
-  templatePath  String? // Path to template file
+  templatePath  String?
+  slug          String            @default("default-slug")
   isActive      Boolean           @default(true)
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
   fields        DocumentField[]
   userDocuments UserDocument[]
-  category      DocumentCategory? // Using enum
-  icon          String? // Icon for UI representation
+  category      DocumentCategory?
+  icon          String?
+}
+
+model DocumentField {
+  id             String              @id @default(uuid())
+  documentTypeId String
+  documentType   DocumentType        @relation(fields: [documentTypeId], references: [id], onDelete: Cascade)
+  fieldName      String
+  label          String
+  fieldType      FieldType
+  isRequired     Boolean             @default(true)
+  sortOrder      Int                 @default(0)
+  placeholder    String?
+  defaultValue   String?
+  validation     String?
+  options        Json?
+  helpText       String?
+  section        String?
+  minLength      Int?
+  maxLength      Int?
+  dependsOn      String?
+  dependsValue   String?
+  fieldData      DocumentFieldData[]
+
+  @@index([documentTypeId, sortOrder])
+}
+
+model UserDocument {
+  id                String              @id @default(uuid())
+  userId            String
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documentTypeId    String
+  documentType      DocumentType        @relation(fields: [documentTypeId], references: [id], onDelete: Cascade)
+  title             String
+  status            DocumentStatus      @default(Draft)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  lastGeneratedAt   DateTime?
+  generatedPdfPath  String?
+  generatedDocxPath String?
+  version           Int                 @default(1)
+  isCurrent         Boolean             @default(true)
+  fieldData         DocumentFieldData[]
+
+  @@index([userId, documentTypeId])
+}
+
+model DocumentFieldData {
+  id             String        @id @default(uuid())
+  userDocumentId String
+  userDocument   UserDocument  @relation(fields: [userDocumentId], references: [id], onDelete: Cascade)
+  fieldId        String
+  field          DocumentField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  value          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  versionNumber  Int           @default(1)
+
+  @@unique([userDocumentId, fieldId, versionNumber])
+  @@index([userDocumentId, fieldId])
 }
 
 enum DocumentCategory {
@@ -52,65 +106,6 @@ enum DocumentCategory {
   creative
   technical
   medical
-}
-
-model DocumentField {
-  id             String              @id @default(uuid())
-  documentType   DocumentType        @relation(fields: [documentTypeId], references: [id])
-  documentTypeId String
-  fieldName      String // Internal identifier (snake_case)
-  label          String // User-facing label
-  fieldType      FieldType // Enum for input types
-  isRequired     Boolean             @default(true)
-  sortOrder      Int                 @default(0)
-  placeholder    String?
-  defaultValue   String?
-  validation     String? // Regex or validation rules
-  options        Json? // For select/radio/checkbox options
-  helpText       String? // Helper text for the field
-  section        String? // Group fields into sections
-  minLength      Int?
-  maxLength      Int?
-  dependsOn      String? // Field name this field depends on
-  dependsValue   String? // Required value to show this field
-  fieldData      DocumentFieldData[]
-
-  @@index([documentTypeId, sortOrder])
-}
-
-model UserDocument {
-  id                String              @id @default(uuid())
-  user              User                @relation(fields: [userId], references: [id])
-  userId            String
-  documentType      DocumentType        @relation(fields: [documentTypeId], references: [id])
-  documentTypeId    String
-  title             String
-  status            DocumentStatus      @default(Draft)
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  lastGeneratedAt   DateTime? // When document was last generated
-  generatedPdfPath  String? // Path to generated PDF
-  generatedDocxPath String? // Path to generated Word doc
-  version           Int                 @default(1)
-  isCurrent         Boolean             @default(true)
-  fieldData         DocumentFieldData[]
-
-  @@index([userId, documentTypeId])
-}
-
-model DocumentFieldData {
-  id             String        @id @default(uuid())
-  userDocument   UserDocument  @relation(fields: [userDocumentId], references: [id])
-  userDocumentId String
-  field          DocumentField @relation(fields: [fieldId], references: [id])
-  fieldId        String
-  value          String?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  versionNumber  Int           @default(1)
-
-  @@unique([userDocumentId, fieldId, versionNumber])
-  @@index([userDocumentId, fieldId])
 }
 
 enum FieldType {
