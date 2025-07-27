@@ -9,7 +9,7 @@ import {
   getUserDocument,
   updateDocumentStatus,
   updateUserDocument,
-} from "../controllers/user_document.controllers";
+} from "../controllers/userDocuments";
 
 const router = express.Router();
 

@@ -17,22 +17,40 @@ export const createDocumentType = async (req: Request, res: Response) => {
 
     const { fields, ...documentTypeData } = result.data;
 
-    // Check if document type already exists
-    const existingType = await prisma.documentType.findUnique({
-      where: { name: documentTypeData.name },
+    // Generate slug from name if not provided
+    const slug =
+      documentTypeData.slug ||
+      documentTypeData.name
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-zA-Z0-9\s-]/g, "") // Remove special characters
+        .replace(/\s+/g, "-") // Replace spaces with hyphens
+        .replace(/-+/g, "-") // Replace multiple hyphens with single
+        .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+
+    // Check if document type already exists (by name or slug)
+    const existingType = await prisma.documentType.findFirst({
+      where: {
+        OR: [{ name: documentTypeData.name }, { slug: slug }],
+      },
     });
 
     if (existingType) {
-      res
-        .status(409)
-        .json({ error: "Document type with this name already exists" });
+      const conflictField =
+        existingType.name === documentTypeData.name ? "name" : "slug";
+      res.status(409).json({
+        error: `Document type with this ${conflictField} already exists`,
+      });
       return;
     }
 
     // Create document type with fields in a transaction
     const newDocumentType = await prisma.$transaction(async (tx) => {
       const docType = await tx.documentType.create({
-        data: documentTypeData,
+        data: {
+          ...documentTypeData,
+          slug, // Add the generated or provided slug
+        },
       });
 
       if (fields && fields.length > 0) {
@@ -86,9 +104,9 @@ export const createDocumentType = async (req: Request, res: Response) => {
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
-        res
-          .status(409)
-          .json({ error: "Document type with this name already exists" });
+        res.status(409).json({
+          error: "Document type with this name or slug already exists",
+        });
         return;
       }
     }
