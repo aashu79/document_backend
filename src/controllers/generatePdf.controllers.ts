@@ -27,66 +27,104 @@ export const generatePdfHandler = async (req: Request, res: Response) => {
   let browser: Browser | null = null;
 
   try {
-    // Launch Puppeteer with a stable set of arguments for server environments
     browser = await puppeteer.launch({
-      headless: true,
+      // headless: "new", // Use new headless mode
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage", // Essential for Docker and some CI/CD environments
-        "--disable-gpu", // Often helps prevent crashes in headless mode
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--disable-web-security",
+        "--disable-features=VizDisplayCompositor",
+        "--run-all-compositor-stages-before-draw",
       ],
     });
 
     const page: Page = await browser.newPage();
 
     try {
-      // Use goto with a data URL for more reliable content loading
-      await page.goto(
-        `data:text/html;charset=UTF-8,${encodeURIComponent(htmlContent)}`,
-        {
-          waitUntil: "networkidle0", // Wait for network calls (e.g., fonts) to finish
-          timeout: 60000, // 60-second timeout
-        }
-      );
+      // Optimized HTML content without extra padding
+      const optimizedHtmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <style>
+            * {
+              box-sizing: border-box;
+              margin: 0;
+              padding: 0;
+            }
+            
+            body {
+              font-family: Arial, sans-serif;
+              line-height: 1.4;
+              color: #000;
+              background: white;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            
+            @page {
+              margin: 0;
+            }
+          </style>
+        </head>
+        <body>
+          ${htmlContent}
+        </body>
+        </html>
+      `;
 
+      // Load content without setting viewport
+      await page.setContent(optimizedHtmlContent, {
+        waitUntil: "networkidle0",
+        timeout: 30000,
+      });
+
+      // Generate PDF with paper size matching content
       const pdfBuffer = await page.pdf({
-        format: "A4",
         printBackground: true,
-        margin: { top: "1in", right: "1in", bottom: "1in", left: "1in" },
+        preferCSSPageSize: true, // Respect CSS-defined page sizes
+        displayHeaderFooter: false,
+        margin: {
+          top: "0mm",
+          right: "0mm",
+          bottom: "0mm",
+          left: "0mm",
+        },
       });
 
       res.set({
         "Content-Type": "application/pdf",
-        "Content-Length": pdfBuffer.length,
+        "Content-Length": pdfBuffer.length.toString(),
+        "Content-Disposition": "attachment; filename=resignation-letter.pdf",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
       });
+
       res.send(pdfBuffer);
     } finally {
-      // Ensure the page is closed even if pdf generation fails
       await page.close();
     }
   } catch (error) {
     console.error("PDF Generation Error:", error);
 
-    // FIX: Correctly check for TimeoutError
     if (error instanceof TimeoutError) {
       return res.status(504).json({
         error: "PDF generation timed out.",
         details:
-          "The server could not load external resources (like fonts) in time. Check network or firewall settings.",
+          "The server could not generate the PDF in time. Please try again.",
       });
     }
 
-    // Handle other errors, including the TargetCloseError
     res.status(500).json({
       error: "An internal error occurred during PDF generation.",
       details:
-        error instanceof Error
-          ? error.message
-          : "An unknown error occurred. The browser process may have crashed.",
+        error instanceof Error ? error.message : "Unknown error occurred.",
     });
   } finally {
-    // Ensure the main browser instance is closed to prevent memory leaks
     if (browser) {
       await browser.close();
     }

@@ -1,18 +1,9 @@
-/**
- * Document Module: Resignation Letter
- * Slug: resignation-letter
- *
- * This module defines the structure and generation logic for resignation letters.
- * It exports the required fields and a `generate` function that returns
- * all themed HTML templates for this document type.
- */
-
-// 1. DEFINE REQUIRED FIELDS
+// 1. REMOVE AUTHOR POSITION FROM FIELDS
 export const fields = [
   "authorName",
   "authorEmail",
   "authorPhone",
-  "authorPosition",
+  // REMOVED: "authorPosition",
   "recipientName",
   "recipientDesignation",
   "companyName",
@@ -26,197 +17,588 @@ export const fields = [
   "lastWorkingDay",
 ];
 
-// 2. DEFINE THE TEMPLATES (with Placeholders)
+// 2. UPDATED TEMPLATES
 
 const classicTemplate = () => `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Resignation Letter - {{authorName}}</title>
-      <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+Pro:wght@400;600&display=swap');
-        body { font-family: 'Source Sans Pro', Arial, sans-serif; font-size: 11pt; line-height: 1.6; color: #333; max-width: 8.5in; margin: 0 auto; padding: 0; background-color: #fff; }
-        .letter-container { width: 100%; max-width: 8.5in; margin: 0 auto; padding: 1.25in 1in; box-sizing: border-box; position: relative; background-color: #fff; }
-        .header { display: flex; justify-content: space-between; margin-bottom: 2.5em; }
-        .date-block { text-align: right; font-weight: 400; color: #555; }
-        .sender-info, .recipient-block { margin-bottom: 2em; }
-        .sender-info p, .recipient-block p { margin: 0; line-height: 1.4; }
-        .subject-line { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 14pt; margin: 2em 0; color: #2c3e50; text-align: center; }
-        .greeting { font-weight: 600; margin-bottom: 1.5em; }
-        .letter-body { text-align: justify; margin-bottom: 2em; }
-        .letter-body p { margin-bottom: 1.2em; line-height: 1.7; }
-        .closing { margin-top: 2em; }
-        .signature-block { margin-top: 3.5em; }
-        .signature-image { height: 50px; margin-bottom: 1em; }
-        .signature-name { font-family: 'Playfair Display', serif; font-weight: 700; margin: 0; padding: 0; color: #2c3e50; }
-        .ornament { text-align: center; margin: 2em 0; color: #7f8c8d; font-size: 18pt; }
-      </style>
-    </head>
-    <body>
-      <div class="letter-container">
-        <div class="header">
-          <div class="sender-info">
-            <p><strong>{{authorName}}</strong></p>
-            <p>{{authorPosition}}</p>
-            <p>{{authorEmail}}</p>
-            <p>{{authorPhone}}</p>
-          </div>
-          <div class="date-block"><p>{{resignationDate}}</p></div>
-        </div>
-        <div class="recipient-block">
-          <p><strong>{{recipientName}}</strong></p>
-          <p>{{recipientDesignation}}</p>
-          <p>{{companyName}}</p>
-        </div>
-        <div class="subject-line">Letter of Resignation</div>
-        <div class="letter-content">
-          <p class="greeting">Dear {{recipientName}},</p>
-          <div class="letter-body">
-            <p>{{resignationStatement}}</p>
-            <p>My last day of employment will be {{lastWorkingDay}}.</p>
-            <p>{{resignationReason}}</p>
-            <p>{{gratitudeNote}}</p>
-            <p>{{transitionOffer}}</p>
-          </div>
-          <div class="closing"><p>{{closingStatement}}</p></div>
-        </div>
-        <div class="signature-block">
-          <div class="signature-image"><img src="{{signature}}" alt="Signature" /></div>
-          <p class="signature-name">{{authorName}}</p>
-        </div>
-        <div class="ornament">⁂</div>
+   <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resignation Letter - {{authorName}}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Crimson Text', serif; 
+      font-size: 11pt; 
+      line-height: 1.5; 
+      color: #333; 
+      width: 100%;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      background-color: #fff; 
+    }
+    .letter-container { 
+      width: 100%; 
+      height: 100%;
+      padding: 50px;
+      box-sizing: border-box; 
+      background-color: #fff; 
+    }
+    .header { 
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .author-name {
+      font-size: 20pt;
+      font-weight: 600;
+      color: #8B7355;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+    .document-title {
+      font-size: 16pt;
+      color: #8B7355;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+    .date-section {
+      text-align: left;
+      margin: 35px 0 25px 0;
+      font-size: 11pt;
+      color: #333;
+    }
+    .recipient-section { 
+      margin-bottom: 25px;
+      line-height: 1.3;
+    }
+    .recipient-section p { 
+      margin: 3px 0; 
+    }
+    .recipient-name {
+      font-weight: 600;
+    }
+    .company-info {
+      color: #333;
+    }
+    .address-info {
+      color: #333;
+    }
+    .phone-info {
+      color: #333;
+    }
+    .salutation {
+      margin-bottom: 18px;
+      font-weight: 600;
+    }
+    .letter-body { 
+      margin-bottom: 25px;
+      text-align: justify;
+    }
+    .letter-body p { 
+      margin-bottom: 14px; 
+      line-height: 1.6; 
+    }
+    .last-day-info {
+      font-weight: 500;
+    }
+    .signature-section { 
+      margin-top: 40px; 
+    }
+    .closing-statement {
+      margin-bottom: 30px;
+    }
+    .signature-image { 
+      height: 50px; 
+      margin-bottom: 8px; 
+    }
+    .signature-image img {
+      max-height: 50px;
+      max-width: 200px;
+    }
+    .signature-name { 
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+    .contact-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9pt;
+      color: #8B7355;
+      margin-top: 30px;
+      padding-top: 15px;
+      border-top: 1px solid #e0e0e0;
+    }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .icon::before {
+      content: "📞";
+      font-size: 10pt;
+    }
+    .icon.social::before {
+      content: "👤";
+    }
+    .icon.email::before {
+      content: "✉";
+    }
+  </style>
+</head>
+<body>
+  <div class="letter-container">
+    <div class="header">
+      <div class="author-name">{{authorName}}</div>
+      <div class="document-title">Resignation Letter</div>
+    </div>
+    
+    <div class="date-section">{{resignationDate}}</div>
+    
+    <div class="recipient-section">
+      <p class="recipient-name">{{recipientName}}</p>
+      <p class="company-info">{{recipientDesignation}}</p>
+      <p class="company-info">{{companyName}}</p>
+      <p class="address-info">408 Byers Lane Sacramento, CA 94260</p>
+      <p class="phone-info">+246-810-1214</p>
+    </div>
+    
+    <p class="salutation">To Ms. Ferris:</p>
+    
+    <div class="letter-body">
+      <p>{{resignationStatement}}</p>
+      <p class="last-day-info">My last day is expected to be on {{lastWorkingDay}}, two weeks from today.</p>
+      <p>{{gratitudeNote}}</p>
+      <p>{{transitionOffer}}</p>
+    </div>
+    
+    <div class="signature-section">
+      <p class="closing-statement">{{closingStatement}}</p>
+      <div class="signature-image"><img src="{{signature}}" alt="Signature" /></div>
+      <p class="signature-name">{{authorName}}</p>
+    </div>
+    
+    <div class="contact-info">
+      <div class="contact-item">
+        <span class="icon"></span>
+        <span>{{authorPhone}}</span>
       </div>
-    </body>
-    </html>
+      <div class="contact-item">
+        <span class="icon social"></span>
+        <span>@reallygreatsite</span>
+      </div>
+      <div class="contact-item">
+        <span class="icon email"></span>
+        <span>{{authorEmail}}</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
   `;
 
 const modernTemplate = () => `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Resignation Letter - {{authorName}}</title>
-      <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
-        body { font-family: 'Poppins', sans-serif; font-size: 11pt; font-weight: 300; line-height: 1.6; color: #2d3436; max-width: 8.5in; margin: 0 auto; padding: 0; background-color: #fff; }
-        .document-container { max-width: 8.5in; margin: 0 auto; padding: 1.5in 1.25in; position: relative; }
-        .letter-header { display: flex; align-items: center; margin-bottom: 3em; padding-bottom: 1em; border-bottom: 1px solid #f1f1f1; }
-        .author-name { font-size: 18pt; font-weight: 500; letter-spacing: -0.5px; margin: 0; flex-grow: 1; color: #0984e3; }
-        .letter-date { font-size: 10pt; color: #636e72; }
-        .recipient { margin-bottom: 3em; }
-        .recipient p { margin: 0; line-height: 1.5; }
-        .recipient-name { font-weight: 500; }
-        .letter-title { font-size: 14pt; font-weight: 600; letter-spacing: -0.5px; margin: 2em 0; color: #0984e3; }
-        .letter-content p { margin-bottom: 1.5em; line-height: 1.8; }
-        .letter-content .opener { font-weight: 400; }
-        .signature-section { margin-top: 4em; }
-        .signature-image { height: 50px; margin-bottom: 1.5em; }
-        .signatory-name { font-weight: 500; margin: 0; margin-bottom: 0.2em; }
-        .signatory-contact { font-size: 9pt; color: #636e72; margin: 0; }
-        .accent-bar { position: absolute; left: 0; top: 1.5in; bottom: 1.5in; width: 5px; background-color: #0984e3; }
-      </style>
-    </head>
-    <body>
-      <div class="document-container">
-        <div class="accent-bar"></div>
-        <div class="letter-header">
-          <h1 class="author-name">{{authorName}}</h1>
-          <div class="letter-date">{{resignationDate}}</div>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resignation Letter - {{authorName}}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Inter', sans-serif; 
+      font-size: 11pt; 
+      font-weight: 400; 
+      line-height: 1.6; 
+      color: #333; 
+      width: 100%;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      background-color: #fff; 
+    }
+    .document-container { 
+      width: 100%;
+      height: 100%;
+      padding: 50px;
+      box-sizing: border-box;
+      position: relative;
+      background-color: #fff;
+    }
+    .accent-bar { 
+      position: absolute; 
+      left: 50px; 
+      top: 50px; 
+      bottom: 50px; 
+      width: 4px; 
+      background-color: #4A90E2; 
+    }
+    .letter-content {
+      margin-left: 30px;
+      padding-left: 20px;
+    }
+    .letter-header { 
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 35px;
+    }
+    .author-name { 
+      font-size: 20pt; 
+      font-weight: 600; 
+      color: #4A90E2; 
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+    .document-title {
+      font-size: 14pt;
+      color: #666;
+      font-weight: 400;
+      margin-top: 5px;
+    }
+    .date-line { 
+      font-size: 10pt; 
+      color: #666; 
+      margin-top: 5px;
+    }
+    .recipient { 
+      margin-bottom: 30px; 
+    }
+    .recipient p { 
+      margin: 3px 0; 
+      line-height: 1.4; 
+    }
+    .recipient-name { 
+      font-weight: 600; 
+    }
+    .company-name {
+      color: #333;
+    }
+    .company-address {
+      color: #333;
+    }
+    .company-phone {
+      color: #333;
+    }
+    .salutation {
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    .letter-body { 
+      margin-bottom: 25px;
+    }
+    .letter-body p { 
+      margin-bottom: 15px; 
+      line-height: 1.7;
+      text-align: justify;
+    }
+    .last-day-statement {
+      font-weight: 500;
+    }
+    .signature-section { 
+      margin-top: 35px; 
+    }
+    .closing-statement {
+      margin-bottom: 25px;
+    }
+    .signature-image { 
+      height: 50px; 
+      margin: 20px 0 10px 0; 
+    }
+    .signature-image img {
+      max-height: 50px;
+      max-width: 200px;
+    }
+    .signatory-name { 
+      font-weight: 600; 
+      margin-bottom: 20px;
+    }
+    .contact-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9pt;
+      color: #4A90E2;
+      margin-top: 40px;
+      padding-top: 15px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .icon::before {
+      content: "📞";
+      font-size: 10pt;
+    }
+    .icon.location::before {
+      content: "📍";
+    }
+    .icon.email::before {
+      content: "✉";
+    }
+  </style>
+</head>
+<body>
+  <div class="document-container">
+    <div class="accent-bar"></div>
+    <div class="letter-content">
+      <div class="letter-header">
+        <div>
+          <div class="author-name">{{authorName}}</div>
+          <div class="document-title">Resignation Letter</div>
         </div>
-        <div class="recipient">
-          <p class="recipient-name">{{recipientName}}</p>
-          <p>{{recipientDesignation}}</p>
-          <p>{{companyName}}</p>
+        <div class="date-line">{{resignationDate}}</div>
+      </div>
+      
+      <div class="recipient">
+        <p class="recipient-name">{{recipientName}}</p>
+        <p class="company-name">{{recipientDesignation}}</p>
+        <p class="company-name">{{companyName}}</p>
+        <p class="company-address">408 Byers Lane Sacramento, CA 94260</p>
+        <p class="company-phone">+246-810-1214</p>
+      </div>
+      
+      <p class="salutation">To Ms. Ferris:</p>
+      
+      <div class="letter-body">
+        <p>{{resignationStatement}}</p>
+        <p class="last-day-statement">My last day is expected to be on {{lastWorkingDay}}, two weeks from today.</p>
+        <p>{{gratitudeNote}}</p>
+        <p>{{transitionOffer}}</p>
+      </div>
+      
+      <div class="signature-section">
+        <p class="closing-statement">{{closingStatement}}</p>
+        <div class="signature-image"><img src="{{signature}}" alt="Signature" /></div>
+        <p class="signatory-name">{{authorName}}</p>
+      </div>
+      
+      <div class="contact-footer">
+        <div class="contact-item">
+          <span class="icon"></span>
+          <span>{{authorPhone}}</span>
         </div>
-        <h2 class="letter-title">Letter of Resignation</h2>
-        <div class="letter-content">
-          <p class="opener">Dear {{recipientName}},</p>
-          <p>{{resignationStatement}}</p>
-          <p>My last day of employment will be {{lastWorkingDay}}.</p>
-          <p>{{resignationReason}}</p>
-          <p>{{gratitudeNote}}</p>
-          <p>{{transitionOffer}}</p>
-          <p>{{closingStatement}}</p>
+        <div class="contact-item">
+          <span class="icon location"></span>
+          <span>123 Anywhere St., Any City, ST 1234</span>
         </div>
-        <div class="signature-section">
-          <div class="signature-image"><img src="{{signature}}" alt="Signature" /></div>
-          <p class="signatory-name">{{authorName}}</p>
-          <p class="signatory-contact">{{authorEmail}} | {{authorPhone}}</p>
+        <div class="contact-item">
+          <span class="icon email"></span>
+          <span>{{authorEmail}}</span>
         </div>
       </div>
-    </body>
-    </html>
+    </div>
+  </div>
+</body>
+</html>
   `;
 
 const minimalTemplate = () => `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Resignation Letter - {{authorName}}</title>
-      <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@300;400;500&display=swap');
-        body { font-family: 'Montserrat', Arial, sans-serif; font-size: 11pt; font-weight: 300; line-height: 1.7; color: #2d3436; max-width: 8.5in; margin: 0 auto; padding: 0; background-color: #fff; }
-        .page { max-width: 8.5in; margin: 0 auto; padding: 1.5in 1in; box-sizing: border-box; position: relative; background-color: #fff; }
-        .letterhead { position: relative; margin-bottom: 3em; padding-bottom: 1.5em; border-bottom: 1px solid #e0e0e0; }
-        .monogram { position: absolute; top: 0; left: 0; width: 50px; height: 50px; border: 1px solid #2d3436; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 24pt; font-weight: 600; color: #2d3436; }
-        .author-details { margin-left: 70px; }
-        .author-name { font-family: 'Cormorant Garamond', serif; font-size: 18pt; font-weight: 600; margin: 0; color: #2d3436; letter-spacing: 1px; text-transform: uppercase; }
-        .author-contact { font-size: 9pt; color: #636e72; margin-top: 0.5em; }
-        .date-line { text-align: right; font-size: 10pt; color: #636e72; margin-top: -3em; }
-        .recipient-section { margin-bottom: 3em; }
-        .recipient-section p { margin: 0 0 0.2em 0; line-height: 1.5; }
-        .recipient-name { font-weight: 500; }
-        .document-title { font-family: 'Cormorant Garamond', serif; text-align: center; font-size: 18pt; font-weight: 600; color: #2d3436; margin: 2em 0; position: relative; letter-spacing: 1.5px; }
-        .document-title::before, .document-title::after { content: ""; display: inline-block; width: 80px; height: 1px; background-color: #b2bec3; margin: 0 10px; vertical-align: middle; }
-        .letter-body { text-align: justify; margin-bottom: 2em; }
-        .letter-body p { margin-bottom: 1.2em; }
-        .salutation, .complimentary-close { font-weight: 400; }
-        .signature { margin-top: 4em; }
-        .signature-image { height: 60px; margin-bottom: 1.5em; }
-        .signature-name { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 14pt; margin: 0; color: #2d3436; }
-        .signature-title { font-size: 10pt; color: #636e72; margin: 0.3em 0 0 0; }
-        .footer { margin-top: 4em; text-align: center; font-size: 9pt; color: #b2bec3; }
-      </style>
-    </head>
-    <body>
-      <div class="page">
-        <div class="letterhead">
-          <div class="monogram">{{authorName.charAt(0)}}</div>
-          <div class="author-details">
-            <h1 class="author-name">{{authorName}}</h1>
-            <div class="author-contact">{{authorEmail}} | {{authorPhone}}</div>
+   <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resignation Letter - {{authorName}}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Inter', sans-serif; 
+      font-size: 11pt; 
+      font-weight: 400; 
+      line-height: 1.6; 
+      color: #333; 
+      width: 100%;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      background-color: #fff; 
+    }
+    .page { 
+      width: 100%;
+      height: 100%;
+      padding: 50px;
+      box-sizing: border-box; 
+      background-color: #fff; 
+    }
+    .letterhead { 
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #DC143C;
+    }
+    .company-logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .logo-squares {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .logo-row {
+      display: flex;
+      gap: 2px;
+    }
+    .logo-square {
+      width: 12px;
+      height: 12px;
+      background-color: #DC143C;
+    }
+    .company-info h1 {
+      font-size: 16pt;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+      letter-spacing: 0.5px;
+    }
+    .company-info p {
+      font-size: 10pt;
+      color: #666;
+      margin: 2px 0 0 0;
+    }
+    .header-contact {
+      text-align: right;
+      font-size: 9pt;
+      color: #666;
+      line-height: 1.3;
+    }
+    .header-contact p {
+      margin: 1px 0;
+    }
+    .recipient-section { 
+      margin-bottom: 25px;
+    }
+    .recipient-section p { 
+      margin: 2px 0; 
+      line-height: 1.4; 
+    }
+    .recipient-label {
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    .recipient-name { 
+      font-weight: 600; 
+    }
+    .company-address {
+      color: #333;
+    }
+    .date-line {
+      text-align: right;
+      margin-bottom: 30px;
+      font-weight: 500;
+      font-size: 11pt;
+    }
+    .letter-body { 
+      margin-bottom: 25px;
+    }
+    .letter-body p { 
+      margin-bottom: 15px; 
+      line-height: 1.7;
+      text-align: justify;
+    }
+    .salutation {
+      font-weight: 500;
+    }
+    .last-day-info {
+      font-weight: 500;
+    }
+    .signature { 
+      margin-top: 35px; 
+    }
+    .regards {
+      margin-bottom: 25px;
+    }
+    .signature-image { 
+      height: 50px; 
+      margin: 20px 0 10px 0; 
+    }
+    .signature-image img {
+      max-height: 50px;
+      max-width: 200px;
+    }
+    .signature-name { 
+      font-weight: 600; 
+      margin-bottom: 30px;
+    }
+    .footer-bar {
+      width: 100%;
+      height: 30px;
+      background-color: #DC143C;
+      margin-top: 40px;
+      margin-left: -50px;
+      margin-right: -50px;
+      margin-bottom: -50px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="letterhead">
+      <div class="company-logo">
+        <div class="logo-squares">
+          <div class="logo-row">
+            <div class="logo-square"></div>
+            <div class="logo-square"></div>
           </div>
-          <div class="date-line">{{resignationDate}}</div>
+          <div class="logo-row">
+            <div class="logo-square"></div>
+            <div class="logo-square"></div>
+          </div>
         </div>
-        <div class="recipient-section">
-          <p class="recipient-name">{{recipientName}}</p>
-          <p>{{recipientDesignation}}</p>
-          <p>{{companyName}}</p>
+        <div class="company-info">
+          <h1>LICERIA & CO.</h1>
+          <p>Real Estate</p>
         </div>
-        <div class="document-title">Resignation</div>
-        <div class="letter-body">
-          <p class="salutation">Dear {{recipientName}},</p>
-          <p>{{resignationStatement}}</p>
-          <p>My final day of service will be {{lastWorkingDay}}.</p>
-          <p>{{resignationReason}}</p>
-          <p>{{gratitudeNote}}</p>
-          <p>{{transitionOffer}}</p>
-          <p class="complimentary-close">{{closingStatement}}</p>
-        </div>
-        <div class="signature">
-          <div class="signature-image"><img src="{{signature}}" alt="Signature" /></div>
-          <p class="signature-name">{{authorName}}</p>
-          <p class="signature-title">{{authorPosition}}</p>
-        </div>
-        <div class="footer">Confidential | Personal</div>
       </div>
-    </body>
-    </html>
+      <div class="header-contact">
+        <p>123 Anywhere St.</p>
+        <p>Any City, ST 12345</p>
+        <p>+123-456-7890</p>
+        <p>hello@reallygreatsite.com</p>
+        <p>www.reallygreatsite.com</p>
+      </div>
+    </div>
+    
+    <div class="recipient-section">
+      <p class="recipient-label">To:</p>
+      <p class="recipient-name">{{recipientName}}</p>
+      <p class="company-address">{{companyName}}</p>
+      <p class="company-address">123 Anywhere St.</p>
+      <p class="company-address">Any City, ST 12345</p>
+    </div>
+    
+    <div class="date-line">{{resignationDate}}</div>
+    
+    <div class="letter-body">
+      <p class="salutation">Dear {{recipientName}},</p>
+      <p>{{resignationStatement}}</p>
+      <p class="last-day-info">My last day of employment will be {{lastWorkingDay}}.</p>
+      <p>{{resignationReason}}</p>
+      <p>{{gratitudeNote}}</p>
+      <p>{{transitionOffer}}</p>
+    </div>
+    
+    <div class="signature">
+      <p class="regards">{{closingStatement}}</p>
+      <div class="signature-image"><img src="{{signature}}" alt="Signature" /></div>
+      <p class="signature-name">{{authorName}}</p>
+    </div>
+    
+    <div class="footer-bar"></div>
+  </div>
+</body>
+</html>
   `;
 
 const traditionalTemplate = () => `
@@ -227,63 +609,139 @@ const traditionalTemplate = () => `
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Resignation Letter - {{authorName}}</title>
       <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif:wght@400;700&display=swap');
-        body { font-family: 'Noto Serif', Georgia, serif; font-size: 12pt; line-height: 1.6; color: #333; max-width: 8.5in; margin: 0 auto; padding: 0; background-color: #fff; }
-        .letter-sheet { width: 100%; max-width: 8.5in; margin: 0 auto; padding: 1.25in 1in; box-sizing: border-box; position: relative; background-color: #fff; background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23f9f9f9' fill-opacity='1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E"); }
-        .content-area { background-color: #fff; padding: 2em; border: 1px solid #e0e0e0; }
-        .header-section { text-align: right; margin-bottom: 2em; border-bottom: 2px solid #f0f0f0; padding-bottom: 1em; }
-        .sender-block p { margin: 0; line-height: 1.5; }
-        .date-block { font-weight: 700; margin-top: 1em; }
-        .address-section { margin-bottom: 2.5em; }
-        .address-section p { margin: 0; line-height: 1.5; }
-        .subject-line { font-family: 'Lora', serif; font-weight: 700; text-align: center; font-size: 14pt; margin: 2em 0; text-transform: uppercase; letter-spacing: 2px; position: relative; }
-        .subject-line::after { content: ""; display: block; width: 120px; height: 2px; background-color: #333; margin: 0.5em auto 0; }
-        .letter-content { text-align: justify; }
-        .greeting, .closing { font-family: 'Lora', serif; font-weight: 600; }
-        .paragraph { margin-bottom: 1.5em; text-indent: 1.5em; }
-        .paragraph.first { text-indent: 0; }
-        .signature-area { margin-top: 3em; }
-        .signature-image { height: 60px; margin: 2em 0 1em; }
-        .signatory { font-family: 'Lora', serif; font-weight: 600; }
-        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 80pt; color: rgba(200, 200, 200, 0.07); font-family: 'Lora', serif; font-weight: 700; white-space: nowrap; pointer-events: none; }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+          font-family: 'Noto Serif', Georgia, serif; 
+          font-size: 12pt; 
+          line-height: 1.6; 
+          color: #333; 
+          width: 100%;
+          height: 100vh;
+          margin: 0;
+          padding: 0;
+          background-color: #fff; 
+        }
+        .letter-sheet { 
+          width: 100%; 
+          height: 100%;
+          padding: 15mm;
+          box-sizing: border-box; 
+          position: relative; 
+          background-color: #fff; 
+        }
+        .letterhead {
+          margin-bottom: 30px;
+        }
+        .company-name {
+          font-size: 18pt;
+          font-weight: 700;
+          margin-bottom: 5px;
+        }
+        .company-tagline {
+          font-size: 12pt;
+          margin-bottom: 10px;
+        }
+        .letterhead-contact {
+          font-size: 10pt;
+          margin-bottom: 20px;
+        }
+        .recipient-address {
+          float: left;
+          width: 50%;
+        }
+        .date-block {
+          float: right;
+          text-align: right;
+          width: 50%;
+          font-size: 11pt;
+        }
+        .clear {
+          clear: both;
+        }
+        .subject-line { 
+          font-weight: 700; 
+          text-align: center; 
+          font-size: 14pt; 
+          margin: 20px 0; 
+          text-transform: uppercase; 
+          letter-spacing: 2px; 
+        }
+        .letter-content { 
+          text-align: justify; 
+        }
+        .greeting { 
+          font-weight: 600; 
+          margin-bottom: 15px;
+        }
+        .paragraph { 
+          margin-bottom: 15px; 
+        }
+        .signature-area { 
+          margin-top: 30px; 
+        }
+        .signatory { 
+          font-weight: 600; 
+        }
+        .position {
+          font-size: 10pt;
+          color: #666;
+        }
       </style>
     </head>
     <body>
       <div class="letter-sheet">
-        <div class="watermark">Resignation</div>
-        <div class="content-area">
-          <div class="header-section">
-            <div class="sender-block">
-              <p><strong>{{authorName}}</strong></p>
-              <p>{{authorEmail}}</p>
-              <p>{{authorPhone}}</p>
-            </div>
-            <div class="date-block">{{resignationDate}}</div>
+        <div class="letterhead">
+          <div class="company-name">LICERIA & CO.</div>
+          <div class="company-tagline">Real Estate</div>
+          <div class="letterhead-contact">
+            <p>123 Anywhere St., Any City, ST 12345</p>
+            <p>+123-456-7890 | hello@realigrestsite.com | www.realigrestsite.com</p>
           </div>
-          <div class="address-section">
-            <p><strong>{{recipientName}}</strong></p>
-            <p>{{recipientDesignation}}</p>
-            <p>{{companyName}}</p>
-          </div>
-          <div class="subject-line">Notice of Resignation</div>
-          <div class="letter-content">
-            <p class="greeting">Dear {{recipientName}},</p>
-            <p class="paragraph first">{{resignationStatement}}</p>
-            <p class="paragraph">My final day of work will be {{lastWorkingDay}}.</p>
-            <p class="paragraph">{{resignationReason}}</p>
-            <p class="paragraph">{{gratitudeNote}}</p>
-            <p class="paragraph">{{transitionOffer}}</p>
-            <p class="paragraph closing">{{closingStatement}}</p>
-            <div class="signature-area">
-              <div class="signature-image"><img src="{{signature}}" alt="Signature" /></div>
-              <p class="signatory">{{authorName}}</p>
-            </div>
-          </div>
+        </div>
+        
+        <div class="recipient-address">
+          <p>To:</p>
+          <p>{{recipientName}}</p>
+          <p>123 Anywhere St., Any City, ST 12345</p>
+        </div>
+        
+        <div class="date-block">
+          <p>{{resignationDate}}</p>
+        </div>
+        
+        <div class="clear"></div>
+        
+        <div class="subject-line">Notice of Resignation</div>
+        
+        <div class="letter-content">
+          <p class="greeting">Dear {{recipientName}},</p>
+          <p class="paragraph">{{resignationStatement}}</p>
+          <p class="paragraph">My final day of work will be {{lastWorkingDay}}.</p>
+          <p class="paragraph">{{resignationReason}}</p>
+          <p class="paragraph">{{gratitudeNote}}</p>
+          <p class="paragraph">{{transitionOffer}}</p>
+          <p class="paragraph">{{closingStatement}}</p>
+        </div>
+        
+        <div class="signature-area">
+          <p class="signatory">Regards,</p>
+          <p class="signatory">{{authorName}}</p>
+          <p class="position">CEO</p>
         </div>
       </div>
     </body>
     </html>
   `;
+
+export function rawTemplate() {
+  return {
+    classic: classicTemplate(),
+    modern: modernTemplate(),
+    minimal: minimalTemplate(),
+    traditional: traditionalTemplate(),
+  };
+}
 
 export function generate(formData: any) {
   // Ensure formData is an object

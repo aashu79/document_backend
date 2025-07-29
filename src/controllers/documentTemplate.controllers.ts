@@ -16,7 +16,7 @@ export const getDocumentTemplates = (req: Request, res: Response) => {
       });
     }
 
-    const templatesWithPlaceholders = module.generate({});
+    const templatesWithPlaceholders = module.rawTemplate();
 
     return res.status(200).json(templatesWithPlaceholders);
   } catch (error) {
